@@ -2,7 +2,7 @@ require('dotenv').config()
 import mongoose from 'mongoose'
 import Message from './models'
 
-const mongoConnect = async () => {
+export const mongoConnect = async () => {
   try {
     let DB_URI = process.env.MONGO_URI
 
@@ -21,10 +21,10 @@ const mongoConnect = async () => {
   }
 }
 
-const getMessages = async (req, res) => {
+export const getMessages = async (req, res) => {
   try {
     const messages = await Message.find()
-    res.status(200).json(messages)
+    res.json(messages)
   } catch (error) {
     console.log(error)
   }

@@ -5,6 +5,9 @@ import { format } from 'timeago.js'
 import { v4 as uuidv4 } from 'uuid'
 import Particles from 'react-tsparticles'
 import config from '../public/particlesjs-config.json'
+import { useRouter } from 'next/router'
+import { mongoConnect } from './api'
+import Message from './api/models'
 
 const images = [
   'https://images.pexels.com/photos/3411134/pexels-photo-3411134.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500',
@@ -38,9 +41,9 @@ const Comment = ({ sender, userId, text, time }) => {
   )
 }
 
-const Home = ({ prevComments }) => {
+const Home = ({ messages }) => {
   const [userId, setUserId] = useState(null)
-  const [comments, setComments] = useState(prevComments)
+  const [comments, setComments] = useState(messages)
   const textRef = useRef()
 
   useEffect(() => {
@@ -109,11 +112,12 @@ const Home = ({ prevComments }) => {
   )
 }
 
-export const getStaticProps = async () => {
-  const { data } = await axios.get(`http://localhost:3000/api`)
+export const getStaticProps = async (c) => {
+  await mongoConnect()
+  const messages = await Message.find()
   return {
     props: {
-      prevComments: data,
+      messages: JSON.parse(JSON.stringify(messages)),
     },
     revalidate: 4,
   }
